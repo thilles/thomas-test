@@ -1,7 +1,7 @@
 name: Splunk Appinspect Actions Demo
 on: [push]
 jobs:
-  Inspect app:
+  Inspect:
     runs-on: ubuntu-latest
     steps:
       - name: Splunk AppInspect
