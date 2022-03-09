@@ -7,5 +7,5 @@ jobs:
       - name: Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: 'TA-app'
+          app_path: 'thomas-test/TA-app'
           included_tags: cloud
