@@ -2,7 +2,10 @@ name: Splunk Package, Vet and app
 on: [push]
 jobs:
   Package-and-Inspect-app:
+    id: build
     runs-on: ubuntu-latest
+    outputs:
+      appname: ${{ steps.appname.outputs.buildpkg }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -24,9 +27,10 @@ jobs:
           mkdir tmp && slim package TA-app --output-dir=tmp
 
       - name: Getting app name and version
+        id: appname
         run: |
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
-          echo "APP_VERSION=$(echo $BUILDPKG | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
+          echo "::set-output name=buildpkg::${{ env.BUILDPKG }}"
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
@@ -43,7 +47,16 @@ jobs:
     needs: Package-and-Inspect-app
     runs-on: ubuntu-latest
     steps:
-      - uses: AButler/upload-release-assets@v2.0
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{needs.build.outputs.appname}}
+      - name: Get tag version from file name
+        run: echo "APP_VERSION=$(echo ${{needs.build.outputs.appname}} | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
+      - name: Create release
+        uses: AButler/upload-release-assets@v2.0
         with:
           files: tmp/${{ env.BUILDPKG }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
