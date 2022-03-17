@@ -20,7 +20,7 @@ jobs:
           mkdir tmp && slim package TA-app --output-dir=tmp
       - name: Getting app name and saving to Github environment
         run: |
-          echo APPNAME=$(basename tmp/*tar.gz) >> GITHUB_ENV
+          echo "APPNAME=$(basename tmp/*tar.gz)" >> GITHUB_ENV
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
