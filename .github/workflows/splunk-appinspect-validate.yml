@@ -4,8 +4,11 @@ jobs:
   Package-and-Inspect-app:
     runs-on: ubuntu-latest
     steps:
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       - name: Package app
-        run: tar zcf app-package.tar.gz ./TA-app
+        run: tar -czf app-package.tar.gz TA-app
       - name: Inspect app using Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
