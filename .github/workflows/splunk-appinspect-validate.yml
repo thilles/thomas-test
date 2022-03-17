@@ -1,11 +1,13 @@
 name: Splunk Appinspect Actions Demo
 on: [push]
 jobs:
-  Inspect:
+  Package-and-Inspect-app:
     runs-on: ubuntu-latest
     steps:
-      - name: Splunk AppInspect
+      - name: Package app
+        run: tar zcf app-package.tar.gz TA-app
+      - name: Inspect app using Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: 'master/thomas-test/TA-app'
+          app_path: app-package.tar.gz
           included_tags: cloud
