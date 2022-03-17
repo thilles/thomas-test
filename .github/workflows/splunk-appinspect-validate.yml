@@ -2,7 +2,6 @@ name: Splunk Package, Vet and app
 on: [push]
 jobs:
   Package-and-Inspect-app:
-    id: build
     runs-on: ubuntu-latest
     outputs:
       appname: ${{ steps.appname.outputs.buildpkg }}
@@ -52,9 +51,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{needs.build.outputs.appname}}
+          name: ${{needs.Package-and-Inspect-app.outputs.appname}}
       - name: Get tag version from file name
-        run: echo "APP_VERSION=$(echo ${{needs.build.outputs.appname}} | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
+        run: echo "APP_VERSION=$(echo ${{needs.Package-and-Inspect-app.outputs.appname}} | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       - name: Create release
         uses: AButler/upload-release-assets@v2.0
         with:
