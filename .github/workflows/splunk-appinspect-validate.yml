@@ -6,6 +6,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+      - name: Testing python 
+        run: python --version
       - name: Package app
         run: tar -czf app-package.tar.gz TA-app
       - name: Run Splunk AppInspect
