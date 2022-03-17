@@ -20,7 +20,7 @@ jobs:
           mkdir tmp && slim package TA-app --output-dir=tmp
       - name: Getting app name and saving to Github environment
         run: |
-          echo "APPNAME=$(basename tmp/*tar.gz)" >> GITHUB_ENV
+          echo "APPNAME=TA-app-1.0.0.tar.gz" >> GITHUB_ENV
       - name: Check env
         run: echo "${{ env.APPNAME }}"
       - name: Run Splunk AppInspect
