@@ -27,7 +27,7 @@ jobs:
         id: appname
         run: |
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
-          echo "APP_VERSION=$(echo ${BUILDPKG} | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
+          echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
@@ -46,4 +46,4 @@ jobs:
         with:
           files: tmp/${{ env.BUILDPKG }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: v"${{ env.APP_VERSION }}"
+          release-tag: v${{ env.APP_VERSION }}
