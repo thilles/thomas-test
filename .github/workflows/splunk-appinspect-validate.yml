@@ -1,4 +1,4 @@
-name: Splunk Appinspect Actions Demo
+name: Splunk Package, Vet and app
 on: [push]
 jobs:
   Package-and-Inspect-app:
@@ -20,9 +20,7 @@ jobs:
           mkdir tmp && slim package TA-app --output-dir=tmp
       - name: Getting app name and saving to Github environment
         run: |
-          echo "APPNAME=TA-app-1.0.0.tar.gz" >> GITHUB_ENV
-      - name: Check env
-        run: echo "${{ env.APPNAME }}"
+          echo "APPNAME=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
