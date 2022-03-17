@@ -8,8 +8,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Package app
         run: tar -czf app-package.tar.gz TA-app
-      - name: Inspect app using Splunk AppInspect
+      - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
           app_path: app-package.tar.gz
           included_tags: cloud
+      - name: Upload AppInspect Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: appinspect
+          path: appinspect_result.json
