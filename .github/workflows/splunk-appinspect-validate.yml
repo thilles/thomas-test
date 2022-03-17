@@ -6,17 +6,28 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Testing python 
-        run: python --version
+      - name: Download Splunk Packaging Toolkit (SLIM)
+        run: |
+          wget https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.1.tar.gz
+      - name: Install SLIM
+        run: |
+          pip install splunk-packaging-toolkit-1.0.1.tar.gz 
+      - name: Generate app manifest
+        run: | 
+          slim generate-manifest TA-app -o TA-app/app.manifest
       - name: Package app
-        run: tar -czf app-package.tar.gz TA-app
+        run: |
+          mkdir temp && slim package TA-app --output-dir=temp
+      - name: Getting app name and saving to Github environment
+        run: |
+          echo APPNAME=$(basename tmp/*tar.gz) >> GITHUB_ENV
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: app-package.tar.gz
+          app_path: temp/"${{ env.APPNAME }}"
           included_tags: cloud
       - name: Upload AppInspect Results
         uses: actions/upload-artifact@v2
         with:
-          name: appinspect
-          path: appinspect_result.json
+          name: "${{ env.APPNAME }}"
+          path: temp/"${{ env.APPNAME }}"
