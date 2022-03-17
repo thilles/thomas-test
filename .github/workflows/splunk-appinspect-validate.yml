@@ -24,10 +24,10 @@ jobs:
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: tmp/"${{ env.APPNAME }}"
+          app_path: tmp/${{ env.APPNAME }}
           included_tags: cloud
       - name: Upload AppInspect Results
         uses: actions/upload-artifact@v2
         with:
           name: "${{ env.APPNAME }}"
-          path: tmp/"${{ env.APPNAME }}"
+          path: tmp/${{ env.APPNAME }}
