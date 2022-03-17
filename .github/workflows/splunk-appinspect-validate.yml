@@ -34,16 +34,21 @@ jobs:
         with:
           app_path: tmp/${{ env.BUILDPKG }}
           included_tags: cloud
-
+      - uses: splunk/appinspect-api-action@v2
+        with:
+            filePath: tmp/${{ env.BUILDPKG }}
+            splunkUser: ${{ secrets.SPLUNKBASE_USER }}
+            splunkPassword: ${{ secrets.SPLUNKBASE_PASSWORD }}
+            includedTags: cloud, private_app
 #       - name: Upload AppInspect Results
 #         uses: actions/upload-artifact@v2
 #         with:
 #           name: "${{ env.BUILDPKG }}"
 #           path: tmp/${{ env.BUILDPKG }}
 
-      - name: Create release
-        uses: AButler/upload-release-assets@v2.0
-        with:
-          files: 'tmp/*'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: v${{ env.APP_VERSION }}
+#      - name: Create release
+#        uses: AButler/upload-release-assets@v2.0
+#        with:
+#          files: 'tmp/*'
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#          release-tag: v${{ env.APP_VERSION }}
