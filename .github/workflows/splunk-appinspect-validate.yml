@@ -4,9 +4,11 @@ jobs:
   Package-and-Inspect-app:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
       - name: List files in the repository
         run: |
-          ls -la ${{ github.workspace }}/tmp
+          ls -la ${{ github.workspace }}
       - name: Package app
         run: tar -czf app-package.tar.gz TA-app
       - name: Inspect app using Splunk AppInspect
