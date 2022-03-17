@@ -23,33 +23,28 @@ jobs:
         run: |
           mkdir tmp && slim package TA-app --output-dir=tmp
 
-      - name: Getting app name and saving to Github environment
+      - name: Getting app name and version
         run: |
-          echo "APPNAME=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
-
+          echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
+          echo "APP_VERSION=$(echo $BUILDPKG | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: tmp/${{ env.APPNAME }}
+          app_path: tmp/${{ env.BUILDPKG }}
           included_tags: cloud
 
       - name: Upload AppInspect Results
         uses: actions/upload-artifact@v2
         with:
-          name: "${{ env.APPNAME }}"
-          path: tmp/${{ env.APPNAME }}
+          name: "${{ env.BUILDPKG }}"
+          path: tmp/${{ env.BUILDPKG }}
 
   Create-release-package:
     needs: Package-and-Inspect-app
     runs-on: ubuntu-latest
     steps:
-      - name: Set enviroment for github-release
-        run: |
-          echo ::set-env name=RELEASE_TAG::"v1.0.0"
-          echo ::set-env name=RELEASE_NAME::"minrelease"
-
-      - uses: meeDamian/github-release@2.0
+      - uses: AButler/upload-release-assets@v2.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.RELEASE_TAG }}
-          name: ${{ env.RELEASE_NAME }}
+          files: tmp/${{ env.BUILDPKG }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: v"${{ env.APP_VERSION }}"
