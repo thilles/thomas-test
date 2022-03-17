@@ -17,17 +17,17 @@ jobs:
           slim generate-manifest TA-app -o TA-app/app.manifest
       - name: Package app
         run: |
-          mkdir temp && slim package TA-app --output-dir=temp
+          mkdir tmp && slim package TA-app --output-dir=tmp
       - name: Getting app name and saving to Github environment
         run: |
           echo APPNAME=$(basename tmp/*tar.gz) >> GITHUB_ENV
       - name: Run Splunk AppInspect
         uses: splunk/appinspect-cli-action@v1.4.7-publish
         with:
-          app_path: temp/"${{ env.APPNAME }}"
+          app_path: tmp/"${{ env.APPNAME }}"
           included_tags: cloud
       - name: Upload AppInspect Results
         uses: actions/upload-artifact@v2
         with:
           name: "${{ env.APPNAME }}"
-          path: temp/"${{ env.APPNAME }}"
+          path: tmp/"${{ env.APPNAME }}"
