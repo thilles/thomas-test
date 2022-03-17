@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: List files in the repository
         run: |
-          ls ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/tmp
       - name: Package app
         run: tar -czf app-package.tar.gz TA-app
       - name: Inspect app using Splunk AppInspect
