@@ -52,18 +52,26 @@ jobs:
             splunkUser: ${{ secrets.SPLUNKBASE_USER }}
             splunkPassword: ${{ secrets.SPLUNKBASE_PASSWORD }}
             includedTags: cloud, private_app
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./tmp/*.tar.gz
+          name: 'testing123'
+          tag_name: 'v1.2.3'
+
 #       - name: Upload AppInspect Results
 #         uses: actions/upload-artifact@v2
 #         with:
 #           name: "${{ env.BUILDPKG }}"
 #           path: tmp/${{ env.BUILDPKG }}
 
-      - name: Create release
-        uses: AButler/upload-release-assets@v2.0
-        with:
-          files: './tmp/*'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          release-tag: v${{ env.APP_VERSION }}
+#      - name: Create release
+#        uses: AButler/upload-release-assets@v2.0
+#        with:
+#          files: './tmp/*'
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#          release-tag: v${{ env.APP_VERSION }}
 
 #      - name: Deploy Stage
 #        uses: fjogeleit/http-request-action@v1
