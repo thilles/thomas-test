@@ -15,9 +15,11 @@ jobs:
         run: |
           pip install splunk-packaging-toolkit-1.0.1.tar.gz
 
-      - name: Bump app.conf build number
-      - uses: actions/setup-python@v2
-      - uses: jannekem/run-python-script-action@v1
+      - name: Setup python
+        uses: actions/setup-python@v2
+        
+      - name: Bump app.conf build number 
+        uses: jannekem/run-python-script-action@v1
         with:
           script: |
             import configparser
