@@ -24,10 +24,10 @@ jobs:
           script: |
             import configparser
             config = configparser.ConfigParser()
-            config.read('app.conf')
+            config.read('./TA-app/default/app.conf')
             buildbump = int(config['install']['build']) + 1
             config['install']['build'] = str(buildbump)
-            with open('app.conf', 'w') as configfile:
+            with open('./TA-app/default/app.conf', 'w') as configfile:
                 config.write(configfile)
 
       - name: Generate app manifest
