@@ -15,26 +15,36 @@ jobs:
         run: |
           pip install splunk-packaging-toolkit-1.0.1.tar.gz
 
+      - name: Bump app.conf build number
+      - uses: actions/setup-python@v2
+      - uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import configparser
+            config = configparser.ConfigParser()
+            config.read('app.conf')
+            buildbump = int(config['install']['build']) + 1
+            config['install']['build'] = str(buildbump)
+            with open('app.conf', 'w') as configfile:
+                config.write(configfile)
+
       - name: Generate app manifest
         run: |
           slim generate-manifest TA-app -o TA-app/app.manifest
 
       - name: Package app
-        run: |
-          mkdir tmp && slim package TA-app --output-dir=tmp
-
-      - name: Getting app name and version
         id: appname
         run: |
+          mkdir tmp && slim package TA-app --output-dir=tmp
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       
       - name: Run Splunk AppInspect
-        uses: splunk/appinspect-cli-action@v1.4.7-publish
-        with:
-          app_path: tmp/${{ env.BUILDPKG }}
-          included_tags: cloud
-      - uses: splunk/appinspect-api-action@v2
+#        uses: splunk/appinspect-cli-action@v1.4.7-publish
+#        with:
+#          app_path: tmp/${{ env.BUILDPKG }}
+#          included_tags: cloud
+        uses: splunk/appinspect-api-action@v2
         with:
             filePath: tmp/${{ env.BUILDPKG }}
             splunkUser: ${{ secrets.SPLUNKBASE_USER }}
@@ -52,3 +62,11 @@ jobs:
 #          files: 'tmp/*'
 #          repo-token: ${{ secrets.GITHUB_TOKEN }}
 #          release-tag: v${{ env.APP_VERSION }}
+
+#      - name: Deploy Stage
+#        uses: fjogeleit/http-request-action@v1
+#        with:
+#          url: 'https://ansible.io/api/v2/job_templates/84/launch/'
+#          method: 'POST'
+#          username: ${{ secrets.AWX_USER }}
+#          password: ${{ secrets.AWX_PASSWORD }}
