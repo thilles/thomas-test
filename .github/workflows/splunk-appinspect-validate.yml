@@ -58,20 +58,13 @@ jobs:
         with:
           files: ./tmp/*.tar.gz
           name: "${{ env.BUILDPKG }}"
-          tag_name: v"${{ env.APP_VERSION }}"
+          tag_name: v${{ env.APP_VERSION }}
 
 #       - name: Upload AppInspect Results
 #         uses: actions/upload-artifact@v2
 #         with:
 #           name: "${{ env.BUILDPKG }}"
 #           path: tmp/${{ env.BUILDPKG }}
-
-#      - name: Create release
-#        uses: AButler/upload-release-assets@v2.0
-#        with:
-#          files: './tmp/*'
-#          repo-token: ${{ secrets.GITHUB_TOKEN }}
-#          release-tag: v${{ env.APP_VERSION }}
 
 #      - name: Deploy Stage
 #        uses: fjogeleit/http-request-action@v1
