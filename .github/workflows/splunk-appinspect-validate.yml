@@ -7,12 +7,9 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       
-      - name: Download Splunk Packaging Toolkit (SLIM)
+      - name: Download and install Splunk Packaging Toolkit (SLIM)
         run: |
           wget https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.1.tar.gz
-
-      - name: Install SLIM
-        run: |
           pip install splunk-packaging-toolkit-1.0.1.tar.gz
 
 #      - name: Setup python
@@ -59,12 +56,6 @@ jobs:
           files: ./tmp/*.tar.gz
           name: "${{ env.BUILDPKG }}"
           tag_name: v${{ env.APP_VERSION }}
-
-#       - name: Upload AppInspect Results
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: "${{ env.BUILDPKG }}"
-#           path: tmp/${{ env.BUILDPKG }}
 
 #      - name: Deploy Stage
 #        uses: fjogeleit/http-request-action@v1
