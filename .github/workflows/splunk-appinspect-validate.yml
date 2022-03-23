@@ -57,8 +57,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./tmp/*.tar.gz
-          name: 'testing123'
-          tag_name: 'v1.2.3'
+          name: "${{ env.BUILDPKG }}"
+          tag_name: v"${{ env.APP_VERSION }}"
 
 #       - name: Upload AppInspect Results
 #         uses: actions/upload-artifact@v2
