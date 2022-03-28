@@ -41,6 +41,11 @@ jobs:
       
       - name: Setup python
         uses: actions/setup-python@v2
+
+      - name: Install Python Packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
         
       - name: Run Splunk AppInspect 
         uses: jannekem/run-python-script-action@v1
