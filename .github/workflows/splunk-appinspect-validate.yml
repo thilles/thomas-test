@@ -38,29 +38,36 @@ jobs:
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       
-      - name: Run Splunk AppInspect
+      - name: Splunk Login
+        id: splunk-login
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://api.splunk.com/2.0/rest/login/splunk'
+          method: 'GET'
+          username: ${{ secrets.SPLUNKBASE_USER }}
+          password: ${{ secrets.SPLUNKBASE_PASSWORD }}
+
+      - name: Get AppInspect token
+        run: echo "SPLUNK_APPINSPECT_TOKEN=${{ steps.splunk-login.outputs.data.token }}"  >> $GITHUB_ENV
+      
+      - name: Show Response
+        run: echo ${{ env.SPLUNK_APPINSPECT_TOKEN }}
+#      - name: Run Splunk AppInspect
 #        uses: splunk/appinspect-cli-action@v1.4.7-publish
 #        with:
 #          app_path: tmp/${{ env.BUILDPKG }}
 #          included_tags: cloud
-        uses: splunk/appinspect-api-action@v2
-        with:
-            filePath: ./tmp/${{ env.BUILDPKG }}
-            splunkUser: ${{ secrets.SPLUNKBASE_USER }}
-            splunkPassword: ${{ secrets.SPLUNKBASE_PASSWORD }}
-            includedTags: cloud, private_app
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./tmp/*.tar.gz
-          name: "${{ env.BUILDPKG }}"
-          tag_name: v${{ env.APP_VERSION }}
-
-#      - name: Deploy Stage
-#        uses: fjogeleit/http-request-action@v1
+#        uses: splunk/appinspect-api-action@v2
 #        with:
-#          url: 'https://ansible.io/api/v2/job_templates/84/launch/'
-#          method: 'POST'
-#          username: ${{ secrets.AWX_USER }}
-#          password: ${{ secrets.AWX_PASSWORD }}
+#            filePath: ./tmp/${{ env.BUILDPKG }}
+#            splunkUser: ${{ secrets.SPLUNKBASE_USER }}
+#            splunkPassword: ${{ secrets.SPLUNKBASE_PASSWORD }}
+#            includedTags: cloud, private_app
+
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: ./tmp/*.tar.gz
+#          name: "${{ env.BUILDPKG }}"
+#          tag_name: v${{ env.APP_VERSION }}
+
