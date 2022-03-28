@@ -73,6 +73,7 @@ jobs:
                 url = f"https://appinspect.splunk.com/v1/app/validate/status/{REQUEST_ID}"
                 response = requests.request("GET", url, headers=headers)
                 responseJson = response.json()
+            
             # Get AppInspect report
             url = f"https://appinspect.splunk.com/v1/app/report/{REQUEST_ID}"
             headers = {
@@ -80,6 +81,7 @@ jobs:
                 'Content-Type': 'text/html'
             }
             response = requests.request("GET", url, headers=headers)
+            
             # Download report
             with open("appinspect-report-${{ env.APP_VERSION }}.html", "w") as f:
                 f.write(response.text)
@@ -89,39 +91,6 @@ jobs:
         with:
           name: appinspect-report
           path: appinspect-report-${{ env.APP_VERSION }}.html
-
-#      - name: Bump app.conf build number 
-#        uses: jannekem/run-python-script-action@v1
-#        with:
-#          script: |
-#            import configparser
-#            config = configparser.ConfigParser()
-#            config.read('./TA-app/default/app.conf')
-#            buildbump = int(config['install']['build']) + 1
-#            config['install']['build'] = str(buildbump)
-#            with open('./TA-app/default/app.conf', 'w') as configfile:
-#                config.write(configfile)
-
-#      - name: Run Splunk AppInspect
-#        uses: fjogeleit/http-request-action@v1
-#        with:
-#          url: 'https://appinspect.splunk.com/v1/app/validate'
-#          method: 'POST'
-#          bearerToken: ${{ env.SPLUNK_APPINSPECT_TOKEN }}
-#          file: ./tmp/${{ env.BUILDPKG }}
-
-
-
-#        uses: splunk/appinspect-cli-action@v1.4.7-publish
-#        with:
-#          app_path: tmp/${{ env.BUILDPKG }}
-#          included_tags: cloud
-#        uses: splunk/appinspect-api-action@v2
-#        with:
-#            filePath: ./tmp/${{ env.BUILDPKG }}
-#            splunkUser: ${{ secrets.SPLUNKBASE_USER }}
-#            splunkPassword: ${{ secrets.SPLUNKBASE_PASSWORD }}
-#            includedTags: cloud, private_app
 
 #      - name: Release
 #        uses: softprops/action-gh-release@v1
