@@ -38,7 +38,7 @@ jobs:
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       
-      - name: Splunk Login
+      - name: Splunk AppInspect Login
         id: splunklogin
         uses: fjogeleit/http-request-action@v1
         with:
@@ -46,12 +46,24 @@ jobs:
           method: 'GET'
           username: ${{ secrets.SPLUNKBASE_USER }}
           password: ${{ secrets.SPLUNKBASE_PASSWORD }}
+
+      - name: Get AppInspect Token
         run: |
           echo "SPLUNK_APPINSPECT_TOKEN=${{ fromJSON(steps.splunklogin.outputs.response).data.token }}" >> $GITHUB_ENV
       
-      - name: Show Response
-        run: echo ${{ env.SPLUNK_APPINSPECT_TOKEN }}
-#      - name: Run Splunk AppInspect
+#      - name: Show Response
+#        run: echo ${{ env.SPLUNK_APPINSPECT_TOKEN }}
+      
+      - name: Run Splunk AppInspect
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://appinspect.splunk.com/v1/app/validate'
+          method: 'POST'
+          bearerToken: ${{ env.SPLUNK_APPINSPECT_TOKEN }}
+          file: ./tmp/${{ env.BUILDPKG }}
+
+
+
 #        uses: splunk/appinspect-cli-action@v1.4.7-publish
 #        with:
 #          app_path: tmp/${{ env.BUILDPKG }}
