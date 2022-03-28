@@ -51,7 +51,7 @@ jobs:
         run: echo "SPLUNK_APPINSPECT=${{ steps.splunklogin.outputs.response }}" >> $GITHUB_ENV
       
       - name: Show Response
-        run: echo ${{ env.SPLUNK_APPINSPECT_TOKEN.data.token }}
+        run: echo ${{ env.SPLUNK_APPINSPECT.data.token }}
 #      - name: Run Splunk AppInspect
 #        uses: splunk/appinspect-cli-action@v1.4.7-publish
 #        with:
