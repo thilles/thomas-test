@@ -46,8 +46,6 @@ jobs:
           method: 'GET'
           username: ${{ secrets.SPLUNKBASE_USER }}
           password: ${{ secrets.SPLUNKBASE_PASSWORD }}
-
-      - name: Get AppInspect token
         run: |
           echo "SPLUNK_APPINSPECT_TOKEN=${{ fromJSON(steps.splunklogin.outputs.response).data.token }}" >> $GITHUB_ENV
       
