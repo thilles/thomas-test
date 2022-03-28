@@ -73,10 +73,16 @@ jobs:
                 url = f"https://appinspect.splunk.com/v1/app/validate/status/{REQUEST_ID}"
                 response = requests.request("GET", url, headers=headers)
                 responseJson = response.json()
-                if responseJson['status'] == 'ERROR':
-                    error("AppInspect has failed, see generated report")
             
-            # Get AppInspect report
+            # Get AppInspect report - JSON
+            url = f"https://appinspect.splunk.com/v1/app/report/{REQUEST_ID}"
+            response = requests.request("GET", url, headers=headers)
+            if responseJson['summary']['error'] > 0 or responseJson['summary']['failures'] > 0:
+                    print("AppInspect has failed, see generated report")
+                    set_env(INSPECT_STATUS,"failed")
+
+            
+            # Get AppInspect report - HTML
             url = f"https://appinspect.splunk.com/v1/app/report/{REQUEST_ID}"
             headers = {
                 'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}',
@@ -93,6 +99,10 @@ jobs:
         with:
           name: appinspect-report
           path: appinspect-report-${{ env.APP_VERSION }}.html
+      
+      - name: Set exit status depending on AppInspect results
+        if: ${{ env.INSPECT_STATUS == 'failed' }}
+        run: exit 1
 
 #      - name: Release
 #        uses: softprops/action-gh-release@v1
