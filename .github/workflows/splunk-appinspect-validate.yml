@@ -56,7 +56,7 @@ jobs:
             payload={'included_tags': 'cloud'}
             files=[('app_package',('${{ env.BUILDPKG }}',open('./tmp/${{ env.BUILDPKG }}','rb'),'application/octet-stream'))]
             headers = {
-                'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}
+                'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}'
             }
             response = requests.request("POST", url, headers=headers, data=payload, files=files)
             print(response.text)
