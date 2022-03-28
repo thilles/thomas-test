@@ -54,10 +54,9 @@ jobs:
             import requests
             url = "https://appinspect.splunk.com/v1/app/validate"
             payload={'included_tags': 'cloud'}
-            files=[('app_package',('TA-app-1.0.0.tar.gz',open('./tmp/${{ env.BUILDPKG }}','rb'),'application/octet-stream'))]
+            files=[('app_package',('${{ env.BUILDPKG }}',open('./tmp/${{ env.BUILDPKG }}','rb'),'application/octet-stream'))]
             headers = {
-                'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}',
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}
             }
             response = requests.request("POST", url, headers=headers, data=payload, files=files)
             print(response.text)
