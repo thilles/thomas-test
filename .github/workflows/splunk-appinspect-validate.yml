@@ -73,7 +73,7 @@ jobs:
                 url = f"https://appinspect.splunk.com/v1/app/validate/status/{REQUEST_ID}"
                 response = requests.request("GET", url, headers=headers)
                 responseJson = response.json()
-                if responseJson['status'] == ERROR:
+                if responseJson['status'] == 'ERROR':
                     error("AppInspect has failed, see generated report")
             
             # Get AppInspect report
