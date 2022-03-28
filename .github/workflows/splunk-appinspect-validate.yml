@@ -39,7 +39,7 @@ jobs:
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
       
       - name: Splunk Login
-        id: splunk-login
+        id: splunklogin
         uses: fjogeleit/http-request-action@v1
         with:
           url: 'https://api.splunk.com/2.0/rest/login/splunk'
@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.SPLUNKBASE_PASSWORD }}
 
       - name: Get AppInspect token
-        run: echo "SPLUNK_APPINSPECT_TOKEN=${{ steps.splunk-login.outputs.data.token }}"  >> $GITHUB_ENV
+        run: echo ${{ steps.splunklogin.outputs.response }}
       
       - name: Show Response
         run: echo ${{ env.SPLUNK_APPINSPECT_TOKEN }}
