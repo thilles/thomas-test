@@ -77,7 +77,8 @@ jobs:
             # Get AppInspect report - JSON
             url = f"https://appinspect.splunk.com/v1/app/report/{REQUEST_ID}"
             response = requests.request("GET", url, headers=headers)
-            if responseJson['summary']['error'] > 0 or responseJson['summary']['failures'] > 0:
+            responseJson = response.json()
+            if responseJson['summary']['error'] > 0 or responseJson['summary']['failure'] > 0:
                     print("AppInspect has failed, see generated report")
                     set_env(INSPECT_STATUS,"failed")
 
