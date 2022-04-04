@@ -5,7 +5,7 @@ on: [push]
 # Set variables accordingly
 env:
   # Set the app path in workspace. Use a period if the repo only contains the app itself.
-  APP_PATH: ./TA-app
+  APP_PATH: '.'
 
 jobs:
   Package-and-Inspect-app:
