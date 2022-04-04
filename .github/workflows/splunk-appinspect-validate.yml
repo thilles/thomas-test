@@ -14,7 +14,8 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Print
-        run: echo $GITHUB_WORKSPACE
+        run: ls -la
+
       
 #      - name: Download and install Splunk Packaging Toolkit (SLIM)
 #        run: |
