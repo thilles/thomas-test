@@ -6,6 +6,7 @@ on: [push]
 env:
   # Set the app path in workspace. Use a period if the repo only contains the app itself.
   APP_PATH: './'
+  APP_NAME: thomas-test
 
 jobs:
   Package-and-Inspect-app:
@@ -21,7 +22,7 @@ jobs:
 
       - name: Generate app manifest
         run: |
-          slim generate-manifest ${{ env.APP_PATH }} -o ${{ env.APP_PATH }}/app.manifest
+          slim generate-manifest ${{ env.APP_NAME }} -o ${{ env.APP_PATH }}/app.manifest
 
       - name: Package app
         id: appname
@@ -108,7 +109,7 @@ jobs:
       - name: Upload AppInspect report
         uses: actions/upload-artifact@v3
         with:
-          name: appinspect-report
+          name: appinspect-report-${{ env.APP_VERSION }}
           path: appinspect-report-${{ env.APP_VERSION }}.html
       
       - name: Set exit status depending on AppInspect results
