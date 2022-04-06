@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate app manifest
         run: |
-          slim generate-manifest ${{ env.APP_NAME }} -o ${{ env.APP_PATH }}/${{ env.APP_NAME }}/app.manifest
+          slim generate-manifest ${{ env.APP_NAME }} -o ${{ env.APP_PATH }}/app.manifest
 
       - name: Package app
         id: appname
