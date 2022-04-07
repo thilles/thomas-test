@@ -8,6 +8,7 @@ env:
   # Don't use a trailing slash / in the path env
   APP_PATH: foo
   APP_NAME: TA_app
+  SPLUNK_STACK: nbim
 
 jobs:
   Package-and-Inspect-app:
@@ -125,3 +126,19 @@ jobs:
           files: tmp/*.tar.gz
           name: ${{ env.BUILDPKG }}
           tag_name: v${{ env.APP_VERSION }}
+        
+  Install-app-Splunk-Cloud:
+    needs: Package-and-Inspect-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: List files
+        run: ls -la
+
+        #      - name: Installing app in Splunk Cloud
+#        id: splunkcloudinstall
+#        uses: fjogeleit/http-request-action@v1
+#        with:
+#          url: 'https://admin.splunk.com/${{ env.SPLUNK_STACK }}/adminconfig/v2/apps/victoria'
+#          method: 'POST'
+#          bearerToken: ${{ env.SPLUNK_STACK_TOKEN }}
+#          headers: {'ACS-Legal-Ack: Y'}
