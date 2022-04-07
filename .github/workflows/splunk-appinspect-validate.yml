@@ -148,6 +148,7 @@ jobs:
       - name: List files
         run: | 
           ls -la
+          echo  ${{ env.BUILDPKG }}
 
         #      - name: Installing app in Splunk Cloud
 #        id: splunkcloudinstall
