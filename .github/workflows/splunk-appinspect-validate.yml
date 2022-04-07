@@ -13,7 +13,7 @@ jobs:
   Package-and-Inspect-app:
     runs-on: ubuntu-latest
     outputs:
-      buildpkg: ${{ steps.package.outputs.appname }}
+      buildpkg: ${{ steps.package.outputs.name }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
           slim package ${{ env.APP_PATH }}/${{ env.APP_NAME }} --output-dir=tmp
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
-          echo "::set-output name=appname::${{ env.BUILDPKG }}"
+          echo "::set-output name=name::$(basename tmp/*tar.gz)"
       
       - name: Splunk AppInspect login
         id: splunklogin
