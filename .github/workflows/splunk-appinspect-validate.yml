@@ -95,8 +95,10 @@ jobs:
             response = requests.request("GET", url, headers=headers)
             responseJson = response.json()
             if responseJson['summary']['error'] > 0 or responseJson['summary']['failure'] > 0:
-                    print("AppInspect has failed, see generated report")
-                    set_env("INSPECT_STATUS","failed")
+                print("AppInspect has failed, see generated report")
+                set_env("INSPECT_STATUS","failed")
+            else:
+                set_env("INSPECT_STATUS","success")
 
             # Get AppInspect report - HTML
             url = f"https://appinspect.splunk.com/v1/app/report/{REQUEST_ID}"
@@ -110,7 +112,7 @@ jobs:
             with open("appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}.html", "w") as f:
                 f.write(response.text)
 
-      - name: Upload AppInspect report
+      - name: Archive AppInspect report
         uses: actions/upload-artifact@v3
         with:
           name: appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}
@@ -120,7 +122,15 @@ jobs:
         if: ${{ env.INSPECT_STATUS == 'failed' }}
         run: exit 1
 
+      - name: Archive package
+        if: ${{ env.INSPECT_STATUS == 'success' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILDPKG }}
+          path: tmp/*.tar.gz
+
       - name: Release package
+        if: ${{ env.INSPECT_STATUS == 'success' }}
         uses: softprops/action-gh-release@v1
         with:
           files: tmp/*.tar.gz
@@ -131,8 +141,13 @@ jobs:
     needs: Package-and-Inspect-app
     runs-on: ubuntu-latest
     steps:
+      - name: Download app package
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.BUILDPKG }}
       - name: List files
-        run: ls -la
+        run: | 
+          ls -la
 
         #      - name: Installing app in Splunk Cloud
 #        id: splunkcloudinstall
