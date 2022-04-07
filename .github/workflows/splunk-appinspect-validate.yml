@@ -69,7 +69,7 @@ jobs:
 
             # Submit app to AppInspect validation
             url = "https://appinspect.splunk.com/v1/app/validate"
-            payload={'included_tags': 'cloud'}
+            payload={'included_tags': ['cloud', 'private_app']}
             files=[('app_package',('${{ env.BUILDPKG }}',open('./tmp/${{ env.BUILDPKG }}','rb'),'application/octet-stream'))]
             headers = {
                 'Authorization': 'bearer ${{ env.SPLUNK_APPINSPECT_TOKEN }}'
@@ -115,7 +115,7 @@ jobs:
           name: appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}
           path: appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}.html
       
-      - name: Set exit status depending on AppInspect results
+      - name: Check AppInspect results and set exit status
         if: ${{ env.INSPECT_STATUS == 'failed' }}
         run: exit 1
 
