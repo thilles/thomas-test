@@ -4,8 +4,7 @@ on: [push]
 
 # Set variables accordingly
 env:
-  # Set the app path in workspace. Use a period if the repo only contains the app itself.
-  # Don't use a trailing slash / in the path env
+  # Set the app path in the github workspace. Don't use a trailing slash in 
   APP_PATH: foo
   APP_NAME: TA_app
   SPLUNK_STACK: nbim
@@ -13,6 +12,8 @@ env:
 jobs:
   Package-and-Inspect-app:
     runs-on: ubuntu-latest
+    outputs:
+      buildpkg: ${{ steps.package.outputs.appname }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -32,12 +33,13 @@ jobs:
 #          fi
 
       - name: Package app
-        id: appname
+        id: package
         run: |
           mkdir tmp 
           slim package ${{ env.APP_PATH }}/${{ env.APP_NAME }} --output-dir=tmp
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
           echo "APP_VERSION=$(echo $(basename tmp/*tar.gz) | grep --perl-regexp '\d\.\d\.\d' --only-matching)" >> $GITHUB_ENV
+          echo "::set-output name=appname::${{ env.BUILDPKG }}"
       
       - name: Splunk AppInspect login
         id: splunklogin
@@ -144,11 +146,10 @@ jobs:
       - name: Download app package
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.BUILDPKG }}
+          name: ${{needs.Package-and-Inspect-app.outputs.buildpkg}}
       - name: List files
         run: | 
           ls -la
-          echo  ${{ env.BUILDPKG }}
 
         #      - name: Installing app in Splunk Cloud
 #        id: splunkcloudinstall
