@@ -24,18 +24,15 @@ jobs:
           wget https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.1.tar.gz
           pip install splunk-packaging-toolkit-1.0.1.tar.gz
 
-      - name: Generate app manifest
-        run: |
-          slim generate-manifest ${{ env.APP_PATH }}/${{ env.APP_NAME }} -o ${{ env.APP_PATH }}/${{ env.APP_NAME }}/app.manifest
-
 #          if [ ${{ env.APP_PATH }} == "./" ]; then
 #            echo "Deleting hidden files"
 #            rm -rf .*
 #          fi
 
-      - name: Package app
+      - name: Generate app manifest and package app
         id: package
         run: |
+          slim generate-manifest ${{ env.APP_PATH }}/${{ env.APP_NAME }} -o ${{ env.APP_PATH }}/${{ env.APP_NAME }}/app.manifest
           mkdir tmp 
           slim package ${{ env.APP_PATH }}/${{ env.APP_NAME }} --output-dir=tmp
           echo "BUILDPKG=$(basename tmp/*tar.gz)" >> $GITHUB_ENV
@@ -123,7 +120,7 @@ jobs:
           name: appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}
           path: appinspect-report-${{ env.APP_NAME }}-${{ env.APP_VERSION }}.html
       
-      - name: Check AppInspect results and set exit status
+      - name: Check AppInspect results and set workflow exit status
         if: ${{ env.INSPECT_STATUS == 'failed' }}
         run: exit 1
 
@@ -154,11 +151,11 @@ jobs:
         run: | 
           ls -la
 
-        #      - name: Installing app in Splunk Cloud
+#      - name: Installing app in Splunk Cloud
 #        id: splunkcloudinstall
 #        uses: fjogeleit/http-request-action@v1
 #        with:
 #          url: 'https://admin.splunk.com/${{ env.SPLUNK_STACK }}/adminconfig/v2/apps/victoria'
 #          method: 'POST'
-#          bearerToken: ${{ env.SPLUNK_STACK_TOKEN }}
+#          bearerToken: ${{needs.Package-and-Inspect-app.outputs.appinspect_token}}
 #          headers: {'ACS-Legal-Ack: Y'}
